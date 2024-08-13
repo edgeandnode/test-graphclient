@@ -5,22 +5,48 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build.client": "graphclient build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "graphql": "^16.9.0",
+    "next": "14.2.5",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.5"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@graphprotocol/client-add-source-name": "^1.0.20",
+    "@graphprotocol/client-cli": "^2.2.22",
+    "@graphql-codegen/cli": "^4.0.0",
+    "@graphql-codegen/client-preset": "^4.2.5",
+    "@graphql-mesh/cache-localforage": "^0.93.1",
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/graphql": "^1.0.0",
+    "@graphql-mesh/http": "^1.0.0",
+    "@graphql-mesh/merger-stitching": "^1.0.0",
+    "@graphql-mesh/runtime": "^1.0.0",
+    "@graphql-mesh/store": "^1.0.0",
+    "@graphql-mesh/transform-prefix": "^1.0.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
+    "@graphql-tools/utils": "^9.2.1",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.5",
+    "eslint-plugin-testing-library": "5.11.1",
     "postcss": "^8",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  },
+  "graphql": {
+    "schema": ".graphclient/schema.graphql",
+    "documents": "src/**/*.{graphql,ts,tsx}"
   }
 }

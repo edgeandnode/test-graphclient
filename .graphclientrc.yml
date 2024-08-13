@@ -1,0 +1,180 @@
+sources:
+  - name: Network
+    handler:
+      graphql:
+        endpoint: https://{context.network:gateway.thegraph.com/api/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp}
+        retry: 3
+        schemaHeaders:
+          Authorization: Bearer ${GQL_CLIENT_API_KEY}
+        # the authorization bearer token is passed in to the request in the `src/graphql/client.link.ts`  file
+        operationHeaders:
+          Authorization: Bearer {context.config.API_KEY}
+    transforms:
+      - prefix:
+          value: NETWORK__
+          includeRootOperations: true
+  - name: Vesting
+    handler:
+      graphql:
+        endpoint: https://{context.vesting:gateway.thegraph.com/api/subgraphs/id/6fwnMjsnmkxqWQ1rjjASbUkcSDM8xKcSZJXQ2e4PrZK4}
+        retry: 3
+        schemaHeaders:
+          Authorization: Bearer ${GQL_CLIENT_API_KEY}
+        operationHeaders:
+          Authorization: Bearer {context.config.API_KEY}
+    transforms:
+      - prefix:
+          value: VESTING__
+          includeRootOperations: true
+  - name: Analytics
+    handler:
+      graphql:
+        endpoint: https://{context.analytics:gateway.thegraph.com/api/subgraphs/id/AgV4u2z1BFZKSj4Go1AdQswUGW2FcAtnPhifd4V7NLVz}
+        retry: 3
+        schemaHeaders:
+          Authorization: Bearer ${GQL_CLIENT_API_KEY}
+        operationHeaders:
+          Authorization: Bearer {context.config.API_KEY}
+    transforms:
+      - prefix:
+          value: ANALYTICS__
+          includeRootOperations: true
+  - name: ENS
+    handler:
+      graphql:
+        endpoint: https://{context.ens:gateway.thegraph.com/api/subgraphs/id/5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH}
+        retry: 3
+        schemaHeaders:
+          Authorization: Bearer ${GQL_CLIENT_API_KEY}
+        operationHeaders:
+          Authorization: Bearer {context.config.API_KEY}
+    transforms:
+      - prefix:
+          value: ENS__
+          includeRootOperations: true
+  - name: Activity
+    handler:
+      graphql:
+        endpoint: https://{context.activity:gateway.thegraph.com/api/subgraphs/id/2kSBZv3bLvkohyPbshmEZwK5yHmvdkKPkitja3XzTFfY}
+        retry: 3
+        schemaHeaders:
+          Authorization: Bearer ${GQL_CLIENT_API_KEY}
+        operationHeaders:
+          Authorization: Bearer {context.config.API_KEY}
+    transforms:
+      - prefix:
+          value: ACTIVITY__
+          includeRootOperations: true
+  - name: EBO
+    handler:
+      graphql:
+        endpoint: https://{context.ebo:gateway.thegraph.com/api/subgraphs/id/4KFYqUWRTZQ9gn7GPHC6YQ2q15chJfVrX43ezYcwkgxB}
+        retry: 3
+        schemaHeaders:
+          Authorization: Bearer ${GQL_CLIENT_API_KEY}
+        operationHeaders:
+          Authorization: Bearer {context.config.API_KEY}
+    transforms:
+      - prefix:
+          value: EBO__
+          includeRootOperations: true
+  - name: QOS
+    handler:
+      graphql:
+        endpoint: https://gateway.thegraph.com/api/subgraphs/id/Dtr9rETvwokot4BSXaD5tECanXfqfJKcvHuaaEgPDD2D
+        retry: 3
+        schemaHeaders:
+          Authorization: Bearer ${GQL_CLIENT_API_KEY}
+        operationHeaders:
+          Authorization: Bearer {context.config.API_KEY}
+    transforms:
+      - prefix:
+          value: QOS__
+          includeRootOperations: true
+
+additionalTypeDefs: |
+  enum L1ToL2MessageStatus {
+    NOT_YET_CREATED
+    CREATION_FAILED
+    FUNDS_DEPOSITED_ON_L2
+    REDEEMED
+    EXPIRED
+  }
+  enum L2ToL1MessageStatus {
+    UNCONFIRMED
+    CONFIRMED
+    EXECUTED
+  }
+  extend type NETWORK__GraphNetwork {
+    l2MinimumIndexerStake: BigInt!
+  }
+  extend type NETWORK__GraphAccount {
+    ens: String
+  }
+  extend type NETWORK__Indexer {
+    beneficiary: String
+    apr: Float!
+    slug: String!
+    availableDelegationCapacity: BigInt!
+    maxCapacity: BigInt!
+    firstTransferredToL2Status: L1ToL2MessageStatus
+    lastTransferredToL2Status: L1ToL2MessageStatus
+  }
+  extend type NETWORK__Subgraph {
+    queryCount: BigInt
+  }
+  extend type NETWORK__DelegatedStake {
+    originalDelegation: BigInt!
+    unrealizedRewards: BigInt!
+    totalAmountDelegating: BigInt!
+    transferredToL2Status: L1ToL2MessageStatus
+  }
+  extend type ANALYTICS__GraphAccount {
+    ens: String
+  }
+  extend type ACTIVITY__GraphAccount {
+    defaultDisplayName: String
+    image: String
+    ens: String
+  }
+  type VESTING__L2toL1Transfer {
+    """
+    If looking at a TokenLockWallet entity on L1, that has an L2 TokenLockWallet,
+    AND the user has performed a transfer of vested GRT from L2 back to L1,
+    this is the `lastLockedFundsTransferredToL1At` value of that L2 to L1 transfer for the L2 TokenLockWallet.
+    """
+    lastLockedFundsTransferredToL1At: BigInt
+    """
+    If looking at a TokenLockWallet entity on L1, that has an L2 TokenLockWallet,
+    AND the user has performed a transfer of vested GRT from L2 back to L1,
+    this is the `lastLockedFundsTransferredToL1AtTx` value of that L2 to L1 transfer for the L2 TokenLockWallet.
+    """
+    lastLockedFundsTransferredToL1AtTx: String
+    """
+    If looking at a TokenLockWallet entity on L1, that has an L2 TokenLockWallet,
+    AND the user has performed a transfer of vested GRT from L2 back to L1,
+    this is the `lastLockedFundsTransferredToL1Amount` value of that L2 to L1 transfer for the L2 TokenLockWallet.
+    """
+    lastLockedFundsTransferredToL1Amount: BigInt!
+    """
+    If looking at a TokenLockWallet entity on L1, that has an L2 TokenLockWallet,
+    AND the user has performed a transfer of vested GRT from L2 back to L1,
+    this is the `lastLockedFundsTransferredToL1Status` value of that L2 to L1 transfer for the L2 TokenLockWallet.
+    """
+    lastLockedFundsTransferredToL1Status: L2ToL1MessageStatus
+  }
+  extend type VESTING__TokenLockWallet {
+    beneficiaryAccount: NETWORK__GraphAccount
+    lastTransferredToL2Status: L1ToL2MessageStatus
+    firstTransferredToL2Status: L1ToL2MessageStatus
+    lastLockedFundsTransferredToL1Status: L2ToL1MessageStatus
+    # the L2 to L1 vested GRT balance transfer data if viewing the L1 TokenLockWallet entity.
+    l2tol1Transfer: VESTING__L2toL1Transfer
+  }
+
+additionalResolvers:
+  - ./graphql-ext/resolvers.ts
+
+# define the additional context props that support the network-specific subgraphs
+codegen:
+  contextType: 'MeshContext & { network: string; analytics: string; ens: string; activity: string; vesting: string; ebo: string; }'
